@@ -1,0 +1,919 @@
+AMSteel Survey System - Complete Technical Documentation
+Project Information
+
+Project Name: AMSteel Survey System
+Version: 1.0.0
+Last Updated: October 2025
+Status: Planning & Design Phase
+
+
+Table of Contents
+
+Project Overview
+System Architecture
+User Roles & Permissions
+Database Schema
+API Endpoints
+Functional Requirements
+User Stories
+UI/UX Design
+Component Architecture
+State Management
+Development Roadmap
+Technical Stack
+Security & Testing
+
+
+1. Project Overview
+What is AMSteel Survey?
+AMSteel Survey is a comprehensive survey management system enabling organizations to collect feedback from employees and clients through customizable surveys with powerful analytics and reporting capabilities.
+Core Features
+Admin Capabilities:
+
+Create and manage surveys with flexible targeting
+Set duration constraints (time-limited or unlimited)
+Share via links, QR codes, and embed codes
+Access detailed analytics and response data
+Export data in multiple formats (CSV, Excel, PDF)
+Track client satisfaction trends over time
+
+Employee Features:
+
+Self-service registration with automatic account creation
+Access and respond to assigned internal surveys
+View response history
+
+Developer/System Admin:
+
+Complete employee management
+Role promotion/demotion capabilities
+System-wide analytics and monitoring
+Activity log access
+
+Public/Client Access:
+
+Registration-free survey participation
+Anonymous or identified responses
+Mobile-optimized interface
+
+
+2. System Architecture
+System Hierarchy Flow
+Employee (Self-Registration)
+  ↓ Creates account automatically (role: employee)
+  ↓ Responds to internal surveys
+  
+Developer (System Administrator)
+  ↓ Reviews and manages employees
+  ↓ Promotes employees to admin role
+  
+Admin (Survey Manager)
+  ↓ Creates and publishes surveys
+  ↓ Manages responses and analytics
+  ↓ Exports data
+  
+Public/Clients (External Respondents)
+  ↓ Access via public links (no registration)
+  ↓ Complete surveys anonymously or with identification
+Survey Types
+Internal Surveys (Employee-Focused)
+
+Authentication required
+Target: All employees, specific departments, or individuals
+Identity tracking enabled
+Use cases: Employee satisfaction, performance reviews, training feedback
+
+External Surveys (Client-Focused)
+
+No authentication required
+Target: Specific clients/companies
+Optional respondent identification
+Use cases: Client satisfaction, product feedback, service quality assessment, progress tracking
+
+
+3. User Roles & Permissions
+Role Definitions
+Developer (System Admin)
+
+Full system access and configuration
+Employee lifecycle management
+Admin role assignment/removal
+Access to all surveys and responses
+System-wide analytics and logs
+
+Admin (Survey Manager)
+
+Survey creation and management (own surveys only)
+Response viewing and analysis (own surveys only)
+Data export capabilities
+Analytics access for owned surveys
+Survey sharing and distribution
+
+Employee (Survey Respondent)
+
+View assigned surveys
+Submit responses
+Access personal response history
+Profile management
+
+Public/Client (External Respondent)
+
+Public link access
+Survey completion without authentication
+View confirmation screens
+
+Permissions Matrix
+CapabilityEmployeeAdminDeveloperAccount ManagementSelf-registration✅✅✅Profile editing✅✅✅Password management✅✅✅Survey OperationsView internal surveys✅✅✅Respond to surveys✅✅❌Create surveys❌✅❌Edit surveys❌✅*❌Delete surveys❌✅*✅Publish surveys❌✅❌Response ManagementView responses❌✅*✅Delete responses❌✅*✅Export data❌✅*✅View analytics❌✅*✅AdministrationView all employees❌❌✅Promote/demote users❌❌✅System settings❌❌✅Activity logs❌❌✅
+* = Own surveys only
+
+4. Database Schema
+Users Table
+sqlCREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  role VARCHAR(20) NOT NULL DEFAULT 'employee' 
+    CHECK (role IN ('developer', 'admin', 'employee')),
+  
+  -- Core Information
+  full_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  employee_id VARCHAR(50),
+  department VARCHAR(100) NOT NULL,
+  position VARCHAR(100),
+  
+  -- Status Flags
+  is_active BOOLEAN DEFAULT true,
+  email_verified BOOLEAN DEFAULT false,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_login_at TIMESTAMP,
+  
+  -- Role Change Tracking
+  promoted_to_admin_at TIMESTAMP,
+  promoted_by_id UUID REFERENCES users(id),
+  promotion_note TEXT,
+  demoted_from_admin_at TIMESTAMP,
+  demoted_by_id UUID REFERENCES users(id),
+  demotion_note TEXT
+);
+
+CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_department ON users(department);
+Surveys Table
+sqlCREATE TABLE surveys (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  admin_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  
+  -- Basic Information
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  welcome_message TEXT,
+  thank_you_message TEXT,
+  
+  -- Type and Targeting
+  survey_type VARCHAR(20) NOT NULL CHECK (survey_type IN ('internal', 'external')),
+  client_name VARCHAR(255),
+  client_company VARCHAR(255),
+  target_department VARCHAR(100),
+  
+  -- Duration Management
+  duration_type VARCHAR(20) NOT NULL CHECK (duration_type IN ('limited', 'unlimited')),
+  start_date TIMESTAMP,
+  end_date TIMESTAMP,
+  duration_hours INTEGER,
+  
+  -- Status and Access
+  status VARCHAR(20) NOT NULL DEFAULT 'draft' 
+    CHECK (status IN ('draft', 'active', 'expired', 'paused', 'closed', 'deleted')),
+  unique_slug VARCHAR(50) UNIQUE NOT NULL,
+  
+  -- Configuration
+  is_anonymous BOOLEAN DEFAULT false,
+  allow_multiple BOOLEAN DEFAULT false,
+  requires_auth BOOLEAN DEFAULT false,
+  has_password BOOLEAN DEFAULT false,
+  password_hash VARCHAR(255),
+  max_responses INTEGER,
+  track_ip BOOLEAN DEFAULT false,
+  track_location BOOLEAN DEFAULT false,
+  allow_editing BOOLEAN DEFAULT false,
+  show_progress_bar BOOLEAN DEFAULT true,
+  redirect_url TEXT,
+  
+  -- Timestamps
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  published_at TIMESTAMP,
+  closed_at TIMESTAMP,
+  
+  -- Denormalized Statistics
+  total_responses INTEGER DEFAULT 0,
+  completed_responses INTEGER DEFAULT 0,
+  total_views INTEGER DEFAULT 0,
+  
+  -- Constraints
+  CONSTRAINT check_client_name_required 
+    CHECK ((survey_type = 'external' AND client_name IS NOT NULL) OR (survey_type = 'internal')),
+  CONSTRAINT check_end_date_required
+    CHECK ((duration_type = 'limited' AND end_date IS NOT NULL) OR (duration_type = 'unlimited'))
+);
+
+CREATE INDEX idx_surveys_admin_id ON surveys(admin_id);
+CREATE INDEX idx_surveys_type ON surveys(survey_type);
+CREATE INDEX idx_surveys_client_name ON surveys(client_name);
+CREATE INDEX idx_surveys_status ON surveys(status);
+Questions Table
+sqlCREATE TABLE questions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  survey_id UUID NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
+  question_type VARCHAR(50) NOT NULL,
+  question_text TEXT NOT NULL,
+  description TEXT,
+  is_required BOOLEAN DEFAULT false,
+  order_index INTEGER NOT NULL,
+  validation_rules JSONB,
+  options JSONB,
+  conditional_logic JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  
+  CONSTRAINT unique_survey_order UNIQUE (survey_id, order_index)
+);
+
+CREATE INDEX idx_questions_survey_id ON questions(survey_id);
+Survey Target Employees Table
+sqlCREATE TABLE survey_target_employees (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  survey_id UUID NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
+  employee_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  has_responded BOOLEAN DEFAULT false,
+  responded_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  
+  CONSTRAINT unique_survey_employee UNIQUE (survey_id, employee_id)
+);
+Responses Table
+sqlCREATE TABLE responses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  survey_id UUID NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
+  employee_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  
+  -- Optional Client Information
+  respondent_name VARCHAR(255),
+  respondent_email VARCHAR(255),
+  respondent_phone VARCHAR(20),
+  
+  status VARCHAR(20) DEFAULT 'in_progress' 
+    CHECK (status IN ('in_progress', 'completed')),
+  
+  -- Tracking Metadata
+  ip_address VARCHAR(45),
+  user_agent TEXT,
+  device_type VARCHAR(20),
+  browser VARCHAR(50),
+  os VARCHAR(50),
+  location JSONB,
+  
+  -- Timing
+  started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  completed_at TIMESTAMP,
+  duration_seconds INTEGER,
+  
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_responses_survey_id ON responses(survey_id);
+CREATE INDEX idx_responses_employee_id ON responses(employee_id);
+Answers Table
+sqlCREATE TABLE answers (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  response_id UUID NOT NULL REFERENCES responses(id) ON DELETE CASCADE,
+  question_id UUID NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
+  
+  -- Flexible Answer Storage
+  answer_text TEXT,
+  answer_number NUMERIC,
+  answer_boolean BOOLEAN,
+  answer_date DATE,
+  answer_time TIME,
+  answer_json JSONB,
+  
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  
+  CONSTRAINT unique_response_question UNIQUE (response_id, question_id)
+);
+Activity Logs Table
+sqlCREATE TABLE activity_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  action VARCHAR(100) NOT NULL,
+  entity_type VARCHAR(50),
+  entity_id UUID,
+  details JSONB,
+  ip_address VARCHAR(45),
+  user_agent TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_activity_logs_user_id ON activity_logs(user_id);
+CREATE INDEX idx_activity_logs_action ON activity_logs(action);
+
+5. API Endpoints
+Authentication Endpoints
+typescriptPOST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+POST /api/auth/change-password
+POST /api/auth/forgot-password
+POST /api/auth/reset-password
+Developer Endpoints
+typescript// Employee Management
+GET    /api/developer/employees
+GET    /api/developer/employees/:id
+PATCH  /api/developer/employees/:id/promote
+PATCH  /api/developer/employees/:id/demote
+PUT    /api/developer/employees/:id
+DELETE /api/developer/employees/:id
+GET    /api/developer/employees/:id/history
+
+// System Analytics
+GET    /api/developer/statistics
+GET    /api/developer/activity-logs
+Admin Endpoints
+typescript// Survey Management
+GET    /api/admin/surveys
+POST   /api/admin/surveys
+GET    /api/admin/surveys/:id
+PUT    /api/admin/surveys/:id
+DELETE /api/admin/surveys/:id
+POST   /api/admin/surveys/:id/duplicate
+PATCH  /api/admin/surveys/:id/publish
+PATCH  /api/admin/surveys/:id/pause
+PATCH  /api/admin/surveys/:id/close
+GET    /api/admin/surveys/:id/share
+
+// Question Management
+POST   /api/admin/surveys/:id/questions
+PUT    /api/admin/questions/:id
+DELETE /api/admin/questions/:id
+PATCH  /api/admin/surveys/:id/questions/reorder
+
+// Response Management
+GET    /api/admin/surveys/:id/responses
+GET    /api/admin/responses/:id
+DELETE /api/admin/responses/:id
+DELETE /api/admin/responses/bulk
+
+// Export & Analytics
+POST   /api/admin/export/csv
+POST   /api/admin/export/excel
+POST   /api/admin/export/pdf
+GET    /api/admin/surveys/:id/analytics
+GET    /api/admin/clients/:clientName/progress
+GET    /api/admin/dashboard/stats
+
+// Client Management
+GET    /api/admin/clients
+GET    /api/admin/clients/:name/surveys
+Employee Endpoints
+typescriptGET  /api/employee/surveys
+GET  /api/employee/surveys/:id
+POST /api/employee/responses
+PUT  /api/employee/responses/:id
+Public Endpoints
+typescriptGET  /api/public/surveys/:slug
+POST /api/public/surveys/:slug/validate-password
+POST /api/public/responses
+
+6. Functional Requirements
+User Management (FR-1)
+Self-Registration (FR-1.1)
+
+Email/password registration with automatic employee account creation
+Department selection from predefined list
+Password strength requirements enforcement
+Terms and conditions acceptance
+Optional email verification
+Immediate login capability post-registration
+
+Profile Management (FR-1.2)
+
+View and edit personal information
+Password change functionality
+Preference settings (language, theme)
+Activity log access
+
+Employee Promotion System (FR-1.3)
+
+Developer can view, filter, and search all employees
+Promotion from employee to admin with optional notes
+Automatic notification system
+Demotion capability with history tracking
+Complete promotion/demotion audit trail
+
+Survey Management (FR-2)
+Survey Creation (FR-2.1)
+
+Wizard-based creation flow
+Survey type selection (internal/external)
+Title validation (3-200 characters)
+Optional description and custom messages
+Draft saving capability
+Preview before publishing
+Survey duplication feature
+
+External Surveys (FR-2.2)
+
+Mandatory client name specification
+Optional client company field
+Public link access without authentication
+Client progress tracking over time
+
+Internal Surveys (FR-2.3)
+
+Employee authentication requirement
+Flexible targeting: all employees, department-specific, or individual selection
+Employee response tracking
+
+Duration Management (FR-2.4)
+
+Limited or unlimited duration options
+Preset duration templates (24h, 48h, 1 week, 1 month)
+Automatic survey closure on expiration
+Manual closure capability
+
+Question Management (FR-2.5)
+
+Add, edit, delete, and reorder questions
+Drag-and-drop reordering
+Required field designation
+Help text/description support
+20+ question types
+Validation rules and conditional logic
+
+Survey Settings (FR-2.6)
+
+Status management (draft/active/paused/closed)
+Response limits
+Time limits per response
+Anonymous response toggle
+Multiple response permissions
+Password protection
+IP and location tracking options
+Custom thank you messages
+Redirect URL configuration
+Response editing capability
+Custom URL slug
+Progress bar display toggle
+
+Survey Publishing (FR-2.7)
+
+Pre-publish validation
+Publish/unpublish capability
+Pause and close functions
+Archive functionality
+Soft delete implementation
+
+Survey Distribution (FR-3)
+Sharing Options (FR-3.1)
+
+Unique survey link generation
+QR code generation and download
+Embed code (iframe) creation
+Email sharing
+Social media integration (WhatsApp, Twitter)
+Clipboard copy functionality
+
+Access Control (FR-3.2)
+
+Public access mode
+Private access with authentication
+Password protection
+Domain/IP whitelisting
+Custom access messages
+
+Response Collection (FR-4)
+Survey Taking (FR-4.1)
+
+Link-based access
+Welcome and thank you screens
+Progress indicators
+Navigation between questions
+Draft saving (if enabled)
+Submission confirmation
+
+Response Validation (FR-4.2)
+
+Required field validation
+Format validation (email, phone, URL)
+Length constraints (min/max)
+Selection limits (min/max)
+File size/type validation
+Inline error display
+Submission prevention on validation failure
+
+Dashboard & Analytics (FR-5)
+Admin Dashboard (FR-5.1)
+
+Survey list with filtering
+Search functionality
+Multiple sort options
+Summary cards
+Quick actions (edit, duplicate, delete, share)
+Bulk operations
+Multi-select capability
+
+Response Management (FR-5.2)
+
+Response list with filters
+Individual response details
+Search and sort capabilities
+Individual and bulk delete
+Multiple export formats
+
+Analytics & Reports (FR-5.3)
+
+Response metrics (count, completion rate, average time)
+Timeline visualizations
+Question-wise analytics
+Choice distribution charts
+Rating averages
+Text response compilation
+Geographic distribution (if tracking enabled)
+Device/browser statistics
+Custom date ranges
+Report export
+
+Client Progress Tracking (FR-5.4)
+
+Client list view
+Client-filtered survey views
+Progress reports with trend analysis
+Improvement percentage calculations
+Multi-period comparisons
+Export functionality
+
+Data Management (FR-6)
+Export (FR-6.1)
+
+CSV, Excel, and PDF export formats
+Multi-survey selection requirement
+Filter application to exports
+Metadata inclusion
+UTF-8 encoding for Arabic text support
+Disabled export button when no surveys selected
+
+
+7. User Stories
+Developer Stories
+US-DEV-001: Employee Management
+As a developer, I want to view all registered employees so that I can manage them and promote deserving candidates.
+Acceptance Criteria:
+
+Display employee list (newest first)
+Show role, department, position, and registration date
+Search by name or email
+Filter by role or department
+Highlight new employees
+
+US-DEV-002: Employee Promotion
+As a developer, I want to promote employees to admin so that they can create and manage surveys.
+Acceptance Criteria:
+
+Select employee from list
+Confirmation dialog showing new permissions
+Optional promotion note
+Immediate role update
+Email and in-app notifications
+Instant permission grant
+
+US-DEV-003: Admin Demotion
+As a developer, I want to demote admins to employee status to revoke survey creation permissions.
+Acceptance Criteria:
+
+Select admin from list
+Confirmation dialog
+Optional demotion note
+Role update to employee
+Permission revocation
+Notification system
+Preservation of previous surveys
+
+US-DEV-004: System Statistics
+As a developer, I want to view system-wide statistics to monitor usage and growth.
+Acceptance Criteria:
+
+Total counts (employees, admins, surveys, responses)
+New employee metrics (weekly/daily)
+Activity trends
+
+Admin Stories
+US-ADMIN-001: External Survey Creation
+As an admin, I want to create surveys for specific clients to measure satisfaction.
+Acceptance Criteria:
+
+Select "External" survey type
+Enter required client name
+Optional company field
+No login requirement
+Client name saved with survey
+Future filtering by client
+
+US-ADMIN-002: Internal Survey Creation
+As an admin, I want to create internal surveys for employees to gather company-wide opinions.
+Acceptance Criteria:
+
+Select "Internal" survey type
+Choose target audience
+Login requirement
+Employee identity tracking
+Targeted visibility
+
+US-ADMIN-003: Duration Configuration
+As an admin, I want to set survey expiration to enable automatic closure.
+Acceptance Criteria:
+
+Limited or unlimited options
+Start/end date configuration for limited surveys
+Preset duration selection
+Automatic closure on expiration
+Manual closure for unlimited surveys
+
+US-ADMIN-004: Client Filtering
+As an admin, I want to filter surveys by client to view all surveys for specific clients.
+Acceptance Criteria:
+
+Client dropdown with all clients
+Single client selection
+Filtered display
+Survey count per client
+Filter reset capability
+
+US-ADMIN-005: Client Progress Tracking
+As an admin, I want to see client satisfaction progress to evaluate service improvement.
+Acceptance Criteria:
+
+Client selection
+Trend chart display
+Survey table for client
+Average ratings per period
+Improvement/decline percentages
+Export capability
+
+US-ADMIN-006: Multi-Select Export
+As an admin, I want to select and export multiple surveys for analysis in external tools.
+Acceptance Criteria:
+
+Multi-survey checkbox selection
+Disabled export button with no selection
+Select all functionality
+Selection count display
+Export option selection
+Format choice (CSV, Excel, PDF)
+UTF-8 encoding for Arabic
+Analysis-ready formatting
+
+Employee Stories
+US-EMP-001: Self-Registration
+As a new employee, I want to register my account to access the survey system.
+Acceptance Criteria:
+
+No invitation required
+Details entry (name, email, password, department)
+Terms acceptance
+Automatic employee account creation
+Immediate login capability
+Assigned survey visibility
+
+US-EMP-002: Survey Visibility
+As an employee, I want to see assigned surveys for response submission.
+Acceptance Criteria:
+
+List of assigned surveys (personal or departmental)
+Status indicators (not answered/in progress/completed)
+Deadline display
+Survey start capability
+Hidden expired/closed surveys
+
+US-EMP-003: Survey Response
+As an employee, I want to respond to internal surveys to share feedback.
+Acceptance Criteria:
+
+Survey opening capability
+Question answering
+Answer validation
+Successful submission
+Confirmation message
+Single response enforcement
+
+Public/Client Stories
+US-CLIENT-001: Link Access
+As a client, I want to open survey links to provide feedback.
+Acceptance Criteria:
+
+Direct link opening
+No login requirement
+Clear welcome screen
+Immediate start capability
+
+US-CLIENT-002: Registration-Free Completion
+As a client, I want to complete surveys without account creation for quick feedback provision.
+Acceptance Criteria:
+
+No account creation
+No login requirement
+Easy question answering
+Successful submission
+Thank you screen display
+
+
+8. UI/UX Design
+Color Palette
+Primary Colors:
+
+Primary Blue: #3B82F6 (interactive elements)
+Dark Blue: #1E40AF (headers, emphasis)
+Light Blue: #DBEAFE (backgrounds, highlights)
+
+Secondary Colors:
+
+Success Green: #10B981 (positive states)
+Error Red: #EF4444 (errors, destructive actions)
+Warning Yellow: #F59E0B (warnings, alerts)
+Secondary Gray: #6B7280 (secondary text)
+
+Neutral Colors:
+
+White: #FFFFFF
+Light Gray: #F3F4F6
+Medium Gray: #E5E7EB
+Dark Gray: #374151
+Black: #111827
+
+Typography
+Font Families:
+
+Arabic: 'Cairo', sans-serif
+English: 'Inter', sans-serif
+
+Font Scale:
+
+H1: 36px / 2.25rem
+H2: 30px / 1.875rem
+H3: 24px / 1.5rem
+H4: 20px / 1.25rem
+Body Large: 18px / 1.125rem
+Body: 16px / 1rem
+Body Small: 14px / 0.875rem
+Caption: 12px / 0.75rem
+
+Design Principles
+
+Clean, minimal interface focusing on content
+Consistent spacing using 8px base grid
+Clear visual hierarchy
+Accessible color contrast ratios (WCAG AA minimum)
+Responsive design for all screen sizes
+Loading states for all async operations
+Clear error messaging
+Empty states with actionable guidance
+
+
+9. Component Architecture
+Frontend Structure
+src/
+├── components/
+│   ├── ui/              # Base UI components (Radix UI-based)
+│   ├── layout/          # Layout components
+│   └── common/          # Shared reusable components
+│
+├── features/
+│   ├── auth/            # Authentication flows
+│   ├── developer/       # Developer dashboard & management
+│   ├── admin/           # Admin dashboard, builder, analytics
+│   ├── employee/        # Employee dashboard & responses
+│   └── public/          # Public survey views
+│
+├── hooks/
+│   ├── api/             # API interaction hooks
+│   ├── state/           # State management hooks
+│   └── utils/           # Utility hooks
+│
+├── store/               # Zustand stores
+├── services/            # API services
+├── types/               # TypeScript types
+├── utils/               # Helper functions
+├── constants/           # App constants
+└── locales/             # Internationalization
+
+10. State Management
+Zustand Store Pattern
+Auth Store:
+
+User authentication state
+Token management
+Permission checking
+Role-based helpers
+
+Survey Store:
+
+Filter state management
+Multi-select functionality
+Wizard state for survey creation
+Client selection tracking
+
+UI Store:
+
+Loading states
+Toast notifications
+Modal management
+Theme preferences
+
+
+11. Development Roadmap
+Phase 1: MVP (Weeks 1-8)
+Sprint 1-2: Foundation & Authentication
+Sprint 3-4: Developer dashboard & employee management
+Sprint 5-6: Survey builder & question types
+Sprint 7-8: Response collection & basic management
+Phase 2: Enhanced Features (Weeks 9-16)
+Sprint 9-10: Advanced dashboard & filtering
+Sprint 11-12: Analytics & visualizations
+Sprint 13-14: Export & client progress tracking
+Sprint 15-16: Advanced question types
+Phase 3: Polish & Launch (Weeks 17-20)
+Sprint 17-18: UI/UX refinement & responsiveness
+Sprint 19-20: Testing, deployment & documentation
+
+12. Technical Stack
+Frontend:
+
+React 18.2+, TypeScript 5.0+, Vite 4.5+
+Tailwind CSS 3.3+, Radix UI
+Zustand (state), React Query (server state)
+React Router 6+, React Hook Form, Zod
+Recharts, Lucide React, date-fns
+
+Backend (Recommended):
+
+Node.js + Express/NestJS or Python + FastAPI/Django
+PostgreSQL with Prisma/SQLAlchemy ORM
+JWT Authentication
+AWS S3 for file storage
+
+DevOps:
+
+Docker, GitHub Actions (CI/CD)
+AWS/Vercel/Netlify hosting
+Sentry error tracking
+
+
+13. Security & Testing
+Security Measures
+Frontend:
+
+Input sanitization (DOMPurify)
+XSS prevention, CSRF tokens
+Secure storage (httpOnly cookies)
+Content Security Policy, HTTPS only
+
+Backend:
+
+SQL injection prevention
+Password hashing (bcrypt, 12 rounds)
+Rate limiting, file validation
+CORS configuration, security headers
+Encryption at rest, regular audits
+
+Compliance:
+
+GDPR compliance, data encryption
+Backup strategy, audit logs
+Data retention policies
+
+Testing Strategy
+
+Unit Tests: >80% coverage (components, hooks, utilities)
+Integration Tests: >70% coverage (API, state flows, forms)
+E2E Tests: >50% coverage (critical user flows)
+Performance: Lighthouse score 90+ target
+
+Success Metrics
+Performance Targets:
+
+API response time: <500ms
+Page load time: <2s
+Uptime: >99.9%
+Error rate: <0.1%
+
+User Engagement:
+
+Survey completion rate: >80%
+Average survey time: 3-5 minutes
+User retention: >70%
