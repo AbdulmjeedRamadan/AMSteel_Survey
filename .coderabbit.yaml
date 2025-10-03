@@ -1,0 +1,70 @@
+# CodeRabbit Configuration for AMSteel Survey Project
+# This file configures CodeRabbit AI code review settings
+
+# Language settings
+language: "en"  # Change to "ar" for Arabic if needed
+
+# Review settings
+review:
+  # Enable automatic reviews for pull requests
+  auto_review: true
+  
+  # Focus areas for this project
+  focus_areas:
+    - "code_quality"
+    - "security"
+    - "performance"
+    - "accessibility"
+    - "internationalization"  # Important for your multi-language project
+  
+  # File patterns to include/exclude
+  include_patterns:
+    - "src/**/*.{ts,tsx,js,jsx}"
+    - "backend/src/**/*.{ts,js}"
+    - "*.{json,md,yaml,yml}"
+  
+  exclude_patterns:
+    - "node_modules/**"
+    - "dist/**"
+    - "build/**"
+    - "*.log"
+    - "package-lock.json"
+
+# Custom instructions for this project
+instructions: |
+  This is a React/TypeScript survey application with:
+  - Frontend: React + TypeScript + Vite + Tailwind CSS
+  - Backend: Node.js + TypeScript + Express
+  - Multi-language support (Arabic/English)
+  - Survey functionality with different user roles
+  
+  Please focus on:
+  1. TypeScript type safety
+  2. React best practices and hooks usage
+  3. Accessibility compliance
+  4. Internationalization (i18n) implementation
+  5. Security best practices
+  6. Performance optimization
+  7. Code consistency and maintainability
+
+# Notification settings
+notifications:
+  # Notify on high-priority issues
+  high_priority: true
+  
+  # Notify on security issues
+  security: true
+  
+  # Notify on performance issues
+  performance: true
+
+# Integration settings
+integrations:
+  # Enable GitHub integration
+  github: true
+  
+  # Enable comments on pull requests
+  pr_comments: true
+  
+  # Enable suggestions for code improvements
+  suggestions: true
