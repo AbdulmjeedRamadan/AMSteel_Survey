@@ -6,26 +6,20 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
+import {
   Activity,
   Users,
   UserCheck,
   UserX,
   FileText,
   MessageSquare,
-  Settings,
   Shield,
   Database,
   Download,
-  Search,
-  Filter,
-  Calendar,
   Clock,
   User,
   AlertCircle,
-  CheckCircle,
-  Info,
-  AlertTriangle
+  CheckCircle
 } from 'lucide-react'
 
 interface ActivityLogEntry {
@@ -50,7 +44,6 @@ export default function ActivityLog({ onExport }: ActivityLogProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [severityFilter, setSeverityFilter] = useState('all')
-  const [dateFilter, setDateFilter] = useState('all')
 
   // Mock activity log data
   const activityLogs: ActivityLogEntry[] = [

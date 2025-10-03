@@ -10,18 +10,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
+import {
   Users,
   UserPlus,
   UserCheck,
   UserX,
-  Search,
-  Filter,
   Download,
-  Mail,
   Calendar,
   Building,
   Briefcase,
@@ -32,8 +29,6 @@ import {
   Clock,
   TrendingUp,
   Eye,
-  Edit,
-  Trash2,
   MoreHorizontal,
   FileText
 } from 'lucide-react'

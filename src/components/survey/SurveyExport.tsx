@@ -7,22 +7,14 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Download, 
-  FileText, 
-  Table, 
-  FileSpreadsheet, 
+import {
+  Download,
+  FileText,
+  Table,
   FileImage,
   Calendar,
-  Filter,
-  Settings,
-  CheckCircle,
-  AlertCircle,
   Clock,
-  Users,
-  BarChart3,
-  Mail,
-  Share2
+  Users
 } from 'lucide-react'
 
 interface ExportOption {
@@ -41,7 +33,7 @@ interface SurveyExportProps {
   onExport: (format: string, options: any) => void
 }
 
-export default function SurveyExport({ survey, responses, onExport }: SurveyExportProps) {
+export default function SurveyExport({ survey: _survey, responses, onExport }: SurveyExportProps) {
   const [activeTab, setActiveTab] = useState('formats')
   const [selectedFormat, setSelectedFormat] = useState('csv')
   const [exportOptions, setExportOptions] = useState({

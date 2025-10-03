@@ -4,21 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { 
-  Flag, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye, 
-  EyeOff,
-  Settings,
-  AlertTriangle,
-  CheckCircle,
-  Clock
+import {
+  Flag,
+  Plus,
+  Edit,
+  Trash2
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
 

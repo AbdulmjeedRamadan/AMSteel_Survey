@@ -5,11 +5,10 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
+import {
   Building,
   TrendingUp,
   TrendingDown,
@@ -18,9 +17,7 @@ import {
   Calendar,
   Target,
   CheckCircle,
-  AlertCircle,
   Clock,
-  Download,
   Eye,
   Mail,
   Phone,
@@ -60,7 +57,7 @@ interface ClientTrackingProps {
   onExport: (clients: Client[], format: 'csv' | 'pdf') => void
 }
 
-export default function ClientTracking({ onExport }: ClientTrackingProps) {
+export default function ClientTracking({ onExport: _onExport }: ClientTrackingProps) {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('clients')
   const [searchTerm, setSearchTerm] = useState('')

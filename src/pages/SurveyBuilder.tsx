@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import QuestionTypeSelector from '@/components/survey/QuestionTypeSelector'
@@ -17,21 +16,8 @@ import {
   Plus,
   Save,
   Eye,
-  Settings,
-  Trash2,
-  GripVertical,
   FileText,
-  Users,
-  Clock,
-  Shield,
-  BarChart3,
-  Play,
-  Pause,
-  CheckCircle,
-  ArrowLeft,
-  ArrowRight,
-  Copy,
-  Move
+  Play
 } from 'lucide-react'
 import { Question } from '@/types'
 

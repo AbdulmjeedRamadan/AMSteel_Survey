@@ -3,14 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
+import {
   Bell,
   BellRing,
   Check,
-  X,
   Mail,
   MessageSquare,
-  Users,
   UserCheck,
   UserX,
   FileText,
@@ -20,7 +18,6 @@ import {
   CheckCircle,
   Clock,
   Send,
-  Eye,
   Trash2
 } from 'lucide-react'
 import toast from 'react-hot-toast'

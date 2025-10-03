@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   Bell,
   Settings,
@@ -19,8 +19,6 @@ import {
   User,
   Menu,
   X,
-  BarChart3,
-  Users,
   FileText
 } from 'lucide-react'
 import { cn } from '@/lib/utils'

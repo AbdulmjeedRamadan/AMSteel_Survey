@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import { smartSearch } from '@/lib/smartSearch'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
-import { 
+import {
   Table,
   TableBody,
   TableCell,
@@ -11,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { 
+import {
   ChevronLeft,
   ChevronRight,
   Search,

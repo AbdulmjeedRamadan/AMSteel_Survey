@@ -4,37 +4,29 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
+import {
   Database,
   Download,
-  Upload,
   RefreshCw,
   Calendar,
   Clock,
   HardDrive,
-  Shield,
   CheckCircle,
   AlertTriangle,
-  Info,
   Settings,
   Play,
   Pause,
-  RotateCcw,
-  FileText,
   Archive,
   Trash2,
   Eye,
-  Copy,
   Server,
-  Cloud,
   Lock,
-  Unlock
+  Plus
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 

@@ -1,43 +1,26 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
   Settings,
   Palette,
-  Globe,
-  Shield,
-  Database,
-  Bell,
-  Mail,
-  MessageSquare,
   Save,
   RotateCcw,
   Eye,
   History,
   Download,
-  Upload,
   AlertTriangle,
-  CheckCircle,
-  Info,
-  Wrench,
   Monitor,
-  Smartphone,
   Flag,
-  Users,
-  Lock,
-  Key,
   Server,
-  Cloud,
-  Zap
+  Cloud
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 

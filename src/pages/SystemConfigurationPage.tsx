@@ -1,7 +1,5 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTranslation } from '@/hooks/useTranslation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Settings } from 'lucide-react'
 import SystemConfiguration from '@/components/developer/SystemConfiguration'

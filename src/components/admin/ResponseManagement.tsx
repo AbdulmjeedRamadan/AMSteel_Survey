@@ -7,16 +7,14 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
+import {
   Eye,
   Edit,
   Trash2,
   CheckCircle,
   Clock,
-  User,
   Mail,
   Phone,
   MapPin,
@@ -24,10 +22,7 @@ import {
   BarChart3,
   Users,
   AlertCircle,
-  CheckCircle2,
-  XCircle,
-  FileText,
-  Info
+  CheckCircle2
 } from 'lucide-react'
 
 interface Response {
@@ -66,7 +61,7 @@ interface ResponseManagementProps {
   // Note: Admin can only view responses, not delete or modify them
 }
 
-export default function ResponseManagement({ surveyId, onExport }: ResponseManagementProps) {
+export default function ResponseManagement({ surveyId: _surveyId, onExport: _onExport }: ResponseManagementProps) {
   const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('list')
   const [searchQuery, setSearchQuery] = useState('')
@@ -321,7 +316,7 @@ export default function ResponseManagement({ surveyId, onExport }: ResponseManag
             {responses.length} رد
           </Badge>
           {selectedResponses.length > 0 && (
-            <Button variant="destructive" onClick={() => onDelete(selectedResponses)}>
+            <Button variant="destructive" onClick={() => console.log('Delete:', selectedResponses)}>
               <Trash2 className="h-4 w-4 mr-2" />
               حذف المحدد ({selectedResponses.length})
             </Button>

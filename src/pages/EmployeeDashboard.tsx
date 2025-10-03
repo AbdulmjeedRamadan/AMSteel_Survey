@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -13,7 +13,7 @@ import {
   TrendingUp,
   Calendar
 } from 'lucide-react'
-import { formatDate, formatRelativeTime } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 
 // Mock data - replace with actual API calls
 const mockAssignedSurveys = [
@@ -62,8 +62,8 @@ const mockStats = {
 
 export default function EmployeeDashboard() {
   const { t } = useTranslation()
-  const [assignedSurveys, setAssignedSurveys] = useState(mockAssignedSurveys)
-  const [stats, setStats] = useState(mockStats)
+  const [assignedSurveys] = useState(mockAssignedSurveys)
+  const [stats] = useState(mockStats)
 
   const getStatusColor = (status: string) => {
     switch (status) {

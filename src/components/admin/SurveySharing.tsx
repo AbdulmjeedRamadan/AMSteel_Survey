@@ -9,11 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  Share2,
+import {
   Copy,
-  QrCode,
-  Link,
   Mail,
   MessageCircle,
   Twitter,
@@ -23,7 +20,6 @@ import {
   Eye,
   Settings,
   CheckCircle,
-  AlertCircle,
   Clock,
   Users,
   Globe,
@@ -39,12 +35,12 @@ interface SurveySharingProps {
   onShare: (method: string, data: any) => void
 }
 
-export default function SurveySharing({ 
-  surveyId, 
-  surveyTitle, 
-  surveyUrl, 
-  isPublic, 
-  onShare 
+export default function SurveySharing({
+  surveyId: _surveyId,
+  surveyTitle,
+  surveyUrl,
+  isPublic,
+  onShare
 }: SurveySharingProps) {
   const [activeTab, setActiveTab] = useState('link')
   const [copied, setCopied] = useState(false)

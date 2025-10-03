@@ -60,12 +60,30 @@ class CodeRabbitTester {
   async checkESLint() {
     console.log('🔧 Checking ESLint...');
     try {
+      // Check if ESLint config exists
+      const eslintConfig = ['eslint.config.js', '.eslintrc.js', '.eslintrc.json', '.eslintrc.yaml'];
+      const hasConfig = eslintConfig.some(config => 
+        fs.existsSync(path.join(this.projectRoot, config))
+      );
+      
+      if (!hasConfig) {
+        this.results.frontend.eslint = { status: '❌ No config', issues: 0 };
+        console.log('❌ ESLint: No configuration file found');
+        return;
+      }
+      
       execSync('npm run lint', { stdio: 'pipe' });
       this.results.frontend.eslint = { status: '✅ Passed', issues: 0 };
       console.log('✅ ESLint: No issues found');
     } catch (error) {
-      const issues = error.stdout.toString().split('\n').filter(line => line.includes('error'));
-      this.results.frontend.eslint = { status: '⚠️ Warnings', issues: issues.length };
+      const output = error.stdout?.toString() || error.stderr?.toString() || '';
+      const issues = output.split('\n').filter(line => 
+        line.includes('error') || line.includes('warning')
+      );
+      this.results.frontend.eslint = { 
+        status: issues.length > 0 ? '⚠️ Issues found' : '❌ Config error', 
+        issues: issues.length 
+      };
       console.log(`⚠️ ESLint: ${issues.length} issues found`);
     }
   }
@@ -86,22 +104,32 @@ class CodeRabbitTester {
   async checkPerformance() {
     console.log('⚡ Checking performance...');
     try {
+      // Try to build the project
       execSync('npm run build', { stdio: 'pipe' });
       
       // Check bundle size
       const distPath = path.join(this.projectRoot, 'dist');
       if (fs.existsSync(distPath)) {
-        const stats = fs.statSync(distPath);
-        const sizeInMB = (stats.size / (1024 * 1024)).toFixed(2);
+        const files = this.getFilesRecursively(distPath, ['.js', '.css']);
+        let totalSize = 0;
+        files.forEach(file => {
+          const stats = fs.statSync(file);
+          totalSize += stats.size;
+        });
+        
+        const sizeInMB = (totalSize / (1024 * 1024)).toFixed(2);
         this.results.performance.bundleSize = { 
           status: sizeInMB < 5 ? '✅ Good' : '⚠️ Large', 
           size: `${sizeInMB}MB` 
         };
         console.log(`📦 Bundle size: ${sizeInMB}MB`);
+      } else {
+        this.results.performance.bundleSize = { status: '❌ No dist folder', size: 'N/A' };
+        console.log('❌ No dist folder found');
       }
     } catch (error) {
       this.results.performance.bundleSize = { status: '❌ Build failed', size: 'N/A' };
-      console.log('❌ Build failed');
+      console.log('❌ Build failed:', error.message);
     }
   }
 

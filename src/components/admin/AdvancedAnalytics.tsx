@@ -1,32 +1,22 @@
 import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { 
-  BarChart3,
+import {
   TrendingUp,
   TrendingDown,
-  Users,
   Clock,
   Target,
   CheckCircle,
-  AlertCircle,
-  Calendar,
   MapPin,
   Monitor,
   Smartphone,
   Tablet,
   Globe,
-  Eye,
   MessageSquare,
   Star,
   PieChart,
-  Activity,
-  Zap
+  Activity
 } from 'lucide-react'
 
 interface AnalyticsData {
@@ -64,10 +54,9 @@ interface AdvancedAnalyticsProps {
   onExport: (data: any) => void
 }
 
-export default function AdvancedAnalytics({ surveyId, onExport }: AdvancedAnalyticsProps) {
+export default function AdvancedAnalytics({ surveyId: _surveyId, onExport: _onExport }: AdvancedAnalyticsProps) {
   const [activeTab, setActiveTab] = useState('overview')
   const [dateRange, setDateRange] = useState('30days')
-  const [selectedSurvey, setSelectedSurvey] = useState('all')
 
   // Mock analytics data
   const analyticsData: AnalyticsData = {

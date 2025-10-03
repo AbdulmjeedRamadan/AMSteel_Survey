@@ -9,12 +9,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
+import {
   MessageSquare,
-  Search,
-  Filter,
   Download,
   Edit,
   Trash2,
@@ -29,12 +27,7 @@ import {
   Smartphone,
   Globe,
   Save,
-  X,
-  History,
-  FileText,
-  BarChart3,
-  Users,
-  Database
+  History
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 

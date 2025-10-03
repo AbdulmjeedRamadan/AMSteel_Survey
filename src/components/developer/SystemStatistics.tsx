@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { formatDate } from '@/lib/utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
+import {
   BarChart3,
   TrendingUp,
   TrendingDown,
@@ -16,10 +15,7 @@ import {
   Calendar,
   Clock,
   Activity,
-  Eye,
   Target,
-  CheckCircle,
-  AlertCircle,
   Zap,
   Globe,
   Shield,
@@ -53,7 +49,7 @@ interface SystemStatisticsProps {
   onExport: (data: any) => void
 }
 
-export default function SystemStatistics({ onExport }: SystemStatisticsProps) {
+export default function SystemStatistics({ onExport: _onExport }: SystemStatisticsProps) {
   const [activeTab, setActiveTab] = useState('overview')
   const [timeRange, setTimeRange] = useState('30days')
 
