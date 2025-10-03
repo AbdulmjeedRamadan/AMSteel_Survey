@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatDate } from '@/lib/utils'
 import { searchEmployees } from '@/lib/smartSearch'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -70,6 +71,7 @@ interface EmployeeManagementProps {
 }
 
 export default function EmployeeManagement({ onPromote, onDemote, onExport }: EmployeeManagementProps) {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('employees')
   const [searchTerm, setSearchTerm] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
@@ -310,9 +312,9 @@ export default function EmployeeManagement({ onPromote, onDemote, onExport }: Em
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">إدارة الموظفين</h2>
+          <h2 className="text-2xl font-bold">{t('ui.management.employeeManagement')}</h2>
           <p className="text-muted-foreground">
-            إدارة الموظفين والترقيات والصلاحيات
+            {t('ui.management.viewManageAllEmployees')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -536,7 +538,7 @@ export default function EmployeeManagement({ onPromote, onDemote, onExport }: Em
                         </div>
                         
                         <div className="flex items-center space-x-1">
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="mobile-button">
                             <Eye className="h-4 w-4" />
                           </Button>
                           {employee.role === 'employee' && (
@@ -570,7 +572,7 @@ export default function EmployeeManagement({ onPromote, onDemote, onExport }: Em
                               </Button>
                             </>
                           )}
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="mobile-button">
                             <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </div>
@@ -650,7 +652,7 @@ export default function EmployeeManagement({ onPromote, onDemote, onExport }: Em
 
       {/* Promotion Dialog */}
       <Dialog open={showPromotionDialog} onOpenChange={setShowPromotionDialog}>
-        <DialogContent>
+        <DialogContent className="mobile-popup">
           <DialogHeader>
             <DialogTitle>ترقية الموظف</DialogTitle>
             <DialogDescription>
@@ -689,7 +691,7 @@ export default function EmployeeManagement({ onPromote, onDemote, onExport }: Em
 
       {/* Demotion Dialog */}
       <Dialog open={showDemotionDialog} onOpenChange={setShowDemotionDialog}>
-        <DialogContent>
+        <DialogContent className="mobile-popup">
           <DialogHeader>
             <DialogTitle>تراجع عن الترقية</DialogTitle>
             <DialogDescription>

@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import { useEffect } from 'react'
+import { useLanguageStore } from './store/languageStore'
 
 // Pages
 import LoginPage from './pages/LoginPage'
@@ -19,6 +21,15 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 
 function App() {
+  const { language, direction } = useLanguageStore()
+
+  // Apply language and direction to document root on mount and changes
+  useEffect(() => {
+    document.documentElement.setAttribute('lang', language)
+    document.documentElement.setAttribute('dir', direction)
+    document.documentElement.className = direction
+  }, [language, direction])
+
   return (
     <div className="min-h-screen bg-background">
       <Routes>

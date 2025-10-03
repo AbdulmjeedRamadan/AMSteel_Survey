@@ -12,7 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import QuestionTypeSelector from '@/components/survey/QuestionTypeSelector'
 import QuestionEditor from '@/components/survey/QuestionEditor'
 import SurveySettings from '@/components/survey/SurveySettings'
-import { 
+import { useTranslation } from '@/hooks/useTranslation'
+import {
   Plus,
   Save,
   Eye,
@@ -35,9 +36,11 @@ import {
 import { Question } from '@/types'
 
 export default function SurveyBuilder() {
+  const { t } = useTranslation()
+
   const [survey, setSurvey] = useState({
     id: '1',
-    title: 'استطلاع جديد',
+    title: t('surveys.newSurvey'),
     description: '',
     type: 'internal',
     status: 'draft',
@@ -87,40 +90,40 @@ export default function SurveyBuilder() {
 
   const validateAllQuestions = () => {
     const errors: Array<{questionIndex: number, questionText: string, errors: string[]}> = []
-    
+
     survey.questions.forEach((question, index) => {
       const questionErrors: string[] = []
-      
+
       // Check question text
       if (!question.question_text?.trim()) {
-        questionErrors.push('نص السؤال مطلوب')
+        questionErrors.push(t('surveys.questionTextRequired'))
       }
-      
+
       // Check choice questions
       if (['single_choice', 'multiple_choice', 'dropdown'].includes(question.question_type)) {
         const choices = question.options?.choices || []
         const validChoices = choices.filter(choice => choice?.trim())
         if (validChoices.length < 2) {
-          questionErrors.push('يجب إضافة خيارين صحيحين على الأقل')
+          questionErrors.push(t('surveys.atLeastTwoChoices'))
         }
       }
-      
+
       // Check rating questions
       if (question.question_type === 'rating') {
         if (!question.options?.max || question.options.max < 2) {
-          questionErrors.push('يجب أن يكون المقياس 2 على الأقل')
+          questionErrors.push(t('surveys.atLeastTwoChoices'))
         }
       }
-      
+
       if (questionErrors.length > 0) {
         errors.push({
           questionIndex: index + 1,
-          questionText: question.question_text || 'سؤال بدون عنوان',
+          questionText: question.question_text || t('surveys.question'),
           errors: questionErrors
         })
       }
     })
-    
+
     return errors
   }
 
@@ -238,30 +241,30 @@ export default function SurveyBuilder() {
   const handleSave = () => {
     // Check if there are valid questions
     if (!hasValidQuestions()) {
-      alert('يجب إضافة سؤال واحد صحيح على الأقل قبل الحفظ')
+      alert(`${t('surveys.needOneValidQuestion')} ${t('surveys.beforeSave')}`)
       return
     }
-    
+
     // Validate client name for external surveys before saving
     if (survey.type === 'external' && !survey.client_name?.trim()) {
-      alert('يجب إدخال اسم العميل للاستطلاعات الخارجية')
+      alert(t('surveys.clientNameRequired'))
       return
     }
-    
+
     console.log('Saving survey as draft:', survey)
     // Set status to draft when saving
     setSurvey(prev => ({ ...prev, status: 'draft' }))
     // In real app, this would save to backend
-    alert('تم حفظ الاستطلاع كمسودة بنجاح!')
+    alert(t('surveys.savedAsDraft'))
   }
 
   const handlePreview = () => {
     // Check if there are valid questions
     if (!hasValidQuestions()) {
-      alert('يجب إضافة سؤال واحد صحيح على الأقل قبل المعاينة')
+      alert(`${t('surveys.needOneValidQuestion')} ${t('surveys.beforePreview')}`)
       return
     }
-    
+
     console.log('Previewing survey:', survey)
     // Create preview URL with survey data
     const previewData = encodeURIComponent(JSON.stringify(survey))
@@ -271,45 +274,45 @@ export default function SurveyBuilder() {
   const handlePublish = () => {
     // Check basic survey info
     if (!survey.title.trim()) {
-      alert('يجب إدخال عنوان للاستطلاع')
+      alert(t('surveys.surveyTitleRequired'))
       return
     }
-    
+
     // Validate client name for external surveys
     if (survey.type === 'external' && !survey.client_name?.trim()) {
-      alert('يجب إدخال اسم العميل للاستطلاعات الخارجية')
+      alert(t('surveys.clientNameRequired'))
       return
     }
-    
+
     // Check if there are any questions
     if (survey.questions.length === 0) {
-      alert('يجب إضافة سؤال واحد على الأقل قبل النشر')
+      alert(`${t('surveys.needOneValidQuestion')} ${t('surveys.beforePublish')}`)
       return
     }
-    
+
     // Validate all questions
     const validationErrors = validateAllQuestions()
     if (validationErrors.length > 0) {
       // Show validation errors in UI
       setShowValidationErrors(true)
-      
-      let errorMessage = 'يرجى إصلاح الأخطاء التالية قبل النشر:\n\n'
+
+      let errorMessage = `${t('surveys.pleaseFixErrors')}:\n\n`
       validationErrors.forEach(error => {
-        errorMessage += `السؤال ${error.questionIndex}: ${error.questionText}\n`
+        errorMessage += `${t('surveys.question')} ${error.questionIndex}: ${error.questionText}\n`
         error.errors.forEach(err => {
           errorMessage += `  • ${err}\n`
         })
         errorMessage += '\n'
       })
-      errorMessage += 'يمكنك إما إكمال الأسئلة الناقصة أو حذفها للمتابعة.'
-      
+      errorMessage += t('surveys.fixErrorsBeforePublish')
+
       alert(errorMessage)
       return
     }
-    
+
     console.log('Publishing survey:', survey)
     setSurvey(prev => ({ ...prev, status: 'active' }))
-    alert('تم نشر الاستطلاع بنجاح!')
+    alert(t('surveys.publishedSuccessfully'))
   }
 
   const handleSurveyUpdate = (updates: any) => {
@@ -321,38 +324,38 @@ export default function SurveyBuilder() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">منشئ الاستطلاعات</h1>
+          <h1 className="text-3xl font-bold">{t('surveys.surveyBuilder')}</h1>
           <p className="text-muted-foreground">
-            إنشاء وإدارة الاستطلاعات المتقدمة
+            {t('surveys.addEditQuestions')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Badge variant={survey.status === 'draft' ? 'secondary' : 'default'}>
-            {survey.status === 'draft' ? 'مسودة' : 'نشط'}
+            {survey.status === 'draft' ? t('surveys.draft') : t('surveys.active')}
           </Badge>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={handlePreview}
             disabled={!hasValidQuestions()}
           >
             <Eye className="h-4 w-4 mr-2" />
-            معاينة
+            {t('surveys.preview')}
           </Button>
-          <Button 
+          <Button
             onClick={handleSave}
             disabled={!hasValidQuestions()}
           >
             <Save className="h-4 w-4 mr-2" />
-            حفظ
+            {t('common.save')}
           </Button>
           {survey.status === 'draft' && (
-            <Button 
-              onClick={handlePublish} 
+            <Button
+              onClick={handlePublish}
               className="bg-green-600 hover:bg-green-700"
               disabled={!hasValidQuestions()}
             >
               <Play className="h-4 w-4 mr-2" />
-              نشر
+              {t('surveys.publish')}
             </Button>
           )}
         </div>
@@ -361,8 +364,8 @@ export default function SurveyBuilder() {
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="questions">الأسئلة</TabsTrigger>
-          <TabsTrigger value="settings">الإعدادات</TabsTrigger>
+          <TabsTrigger value="questions">{t('surveys.questions')}</TabsTrigger>
+          <TabsTrigger value="settings">{t('surveys.settings')}</TabsTrigger>
         </TabsList>
 
         {/* Questions Tab */}
@@ -370,66 +373,66 @@ export default function SurveyBuilder() {
           {/* Survey Basic Info */}
           <Card>
             <CardHeader>
-              <CardTitle>معلومات الاستطلاع الأساسية</CardTitle>
+              <CardTitle>{t('surveys.basicInfo')}</CardTitle>
               <CardDescription>
-                أدخل المعلومات الأساسية للاستطلاع
+                {t('surveys.enterSurveyDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">عنوان الاستطلاع *</Label>
+                  <Label htmlFor="title">{t('surveys.surveyTitle')} *</Label>
                   <Input
                     id="title"
                     value={survey.title}
                     onChange={(e) => handleSurveyUpdate({ title: e.target.value })}
-                    placeholder="أدخل عنوان الاستطلاع"
+                    placeholder={t('surveys.enterSurveyTitle')}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="type">نوع الاستطلاع</Label>
-                  <Select 
-                    value={survey.type} 
+                  <Label htmlFor="type">{t('surveys.surveyType')}</Label>
+                  <Select
+                    value={survey.type}
                     onValueChange={(value) => handleSurveyUpdate({ type: value })}
                   >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="internal">داخلي (للموظفين)</SelectItem>
-                      <SelectItem value="external">خارجي (للعملاء)</SelectItem>
+                      <SelectItem value="internal">{t('surveys.internalEmployees')}</SelectItem>
+                      <SelectItem value="external">{t('surveys.externalClients')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="description">وصف الاستطلاع</Label>
+                <Label htmlFor="description">{t('surveys.surveyDescription')}</Label>
                 <Textarea
                   id="description"
                   value={survey.description}
                   onChange={(e) => handleSurveyUpdate({ description: e.target.value })}
-                  placeholder="أدخل وصفاً مختصراً للاستطلاع"
+                  placeholder={t('surveys.enterSurveyDescription')}
                   rows={3}
                 />
               </div>
               {survey.type === 'external' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="client_name">اسم العميل *</Label>
+                    <Label htmlFor="client_name">{t('surveys.clientName')} *</Label>
                     <Input
                       id="client_name"
                       value={survey.client_name || ''}
                       onChange={(e) => handleSurveyUpdate({ client_name: e.target.value })}
-                      placeholder="أدخل اسم العميل"
+                      placeholder={t('surveys.enterClientName')}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="client_company">شركة العميل</Label>
+                    <Label htmlFor="client_company">{t('surveys.clientCompany')}</Label>
                     <Input
                       id="client_company"
                       value={survey.client_company || ''}
                       onChange={(e) => handleSurveyUpdate({ client_company: e.target.value })}
-                      placeholder="أدخل اسم الشركة (اختياري)"
+                      placeholder={t('surveys.enterCompanyName')}
                     />
                   </div>
                 </div>
@@ -437,10 +440,10 @@ export default function SurveyBuilder() {
               
               {/* Duration Settings */}
               <div className="space-y-4 border-t pt-4">
-                <h3 className="font-medium">إعدادات المدة</h3>
+                <h3 className="font-medium">{t('surveys.durationSettings')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="duration_type">نوع المدة</Label>
+                    <Label htmlFor="duration_type">{t('surveys.durationType')}</Label>
                     <Select 
                       value={survey.duration_type} 
                       onValueChange={(value) => handleSurveyUpdate({ duration_type: value })}
@@ -449,15 +452,15 @@ export default function SurveyBuilder() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="unlimited">غير محدودة</SelectItem>
-                        <SelectItem value="limited">محدودة بتاريخ</SelectItem>
+                        <SelectItem value="unlimited">{t('surveys.unlimited')}</SelectItem>
+                        <SelectItem value="limited">{t('surveys.limited')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   {survey.duration_type === 'limited' && (
                     <>
                       <div className="space-y-2">
-                        <Label htmlFor="start_date">تاريخ البداية</Label>
+                        <Label htmlFor="start_date">{t('surveys.startDate')}</Label>
                         <Input
                           id="start_date"
                           type="date"
@@ -466,7 +469,7 @@ export default function SurveyBuilder() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="end_date">تاريخ النهاية</Label>
+                        <Label htmlFor="end_date">{t('surveys.endDate')}</Label>
                         <Input
                           id="end_date"
                           type="date"
@@ -485,14 +488,14 @@ export default function SurveyBuilder() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>إدارة الأسئلة</CardTitle>
+                  <CardTitle>{t('surveys.manageQuestions')}</CardTitle>
                   <CardDescription>
-                    أضف وحرر الأسئلة لاستطلاعك
+                    {t('surveys.addEditQuestions')}
                   </CardDescription>
                 </div>
                 <Button onClick={() => setIsAddingQuestion(true)}>
                   <Plus className="h-4 w-4 mr-2" />
-                  إضافة سؤال
+                  {t('surveys.addQuestion')}
                 </Button>
               </div>
             </CardHeader>
@@ -501,15 +504,15 @@ export default function SurveyBuilder() {
               {isAddingQuestion && (
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-medium">اختر نوع السؤال</h3>
-                    <Button 
-                      variant="outline" 
+                    <h3 className="text-lg font-medium">{t('surveys.selectQuestionType')}</h3>
+                    <Button
+                      variant="outline"
                       onClick={() => {
                         setIsAddingQuestion(false)
                         setSelectedQuestionType('')
                       }}
                     >
-                      إلغاء
+                      {t('common.cancel')}
                     </Button>
                   </div>
                   <QuestionTypeSelector
@@ -526,13 +529,13 @@ export default function SurveyBuilder() {
                 {survey.questions.length === 0 ? (
                   <div className="text-center py-12">
                     <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <h3 className="text-lg font-medium mb-2">لا توجد أسئلة بعد</h3>
+                    <h3 className="text-lg font-medium mb-2">{t('surveys.noQuestionsAdded')}</h3>
                     <p className="text-muted-foreground mb-4">
-                      ابدأ بإضافة سؤال جديد لاستطلاعك
+                      {t('surveys.startAddingQuestion')}
                     </p>
                     <Button onClick={() => setIsAddingQuestion(true)}>
                       <Plus className="h-4 w-4 mr-2" />
-                      إضافة أول سؤال
+                      {t('surveys.addQuestion')}
                     </Button>
                   </div>
                 ) : (

@@ -709,7 +709,7 @@ export default function AdvancedResponseManagement({
 
       {/* Modify Response Dialog */}
       <Dialog open={showModifyDialog} onOpenChange={setShowModifyDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl mobile-popup">
           <DialogHeader>
             <DialogTitle>تعديل الرد</DialogTitle>
             <DialogDescription>
@@ -771,7 +771,7 @@ export default function AdvancedResponseManagement({
 
       {/* Delete Response Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent>
+        <DialogContent className="mobile-popup">
           <DialogHeader>
             <DialogTitle>حذف الرد</DialogTitle>
             <DialogDescription>

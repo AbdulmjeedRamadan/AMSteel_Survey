@@ -215,7 +215,7 @@ export default function DataTable<T extends Record<string, any>>({
                     </TableCell>
                   ))}
                   <TableCell>
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" className="mobile-button">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </TableCell>

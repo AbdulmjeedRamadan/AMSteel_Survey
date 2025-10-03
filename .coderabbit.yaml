@@ -4,6 +4,16 @@
 # Language settings
 language: "en"  # Change to "ar" for Arabic if needed
 
+# Project-specific settings
+project:
+  name: "AMSteel Survey System"
+  type: "fullstack"
+  frontend: "React + TypeScript + Vite"
+  backend: "Node.js + Express + TypeScript"
+  database: "PostgreSQL"
+  styling: "Tailwind CSS"
+  i18n: "i18next"
+
 # Review settings
 review:
   # Enable automatic reviews for pull requests
@@ -36,16 +46,23 @@ instructions: |
   - Frontend: React + TypeScript + Vite + Tailwind CSS
   - Backend: Node.js + TypeScript + Express
   - Multi-language support (Arabic/English)
-  - Survey functionality with different user roles
+  - Survey functionality with different user roles (Admin, Developer, Employee, Public)
   
   Please focus on:
-  1. TypeScript type safety
+  1. TypeScript type safety and strict typing
   2. React best practices and hooks usage
-  3. Accessibility compliance
+  3. Accessibility compliance (WCAG 2.1)
   4. Internationalization (i18n) implementation
-  5. Security best practices
-  6. Performance optimization
+  5. Security best practices (XSS, CSRF, SQL injection)
+  6. Performance optimization (React.memo, useMemo, useCallback)
   7. Code consistency and maintainability
+  8. Survey-specific security (data validation, user permissions)
+  9. RTL (Right-to-Left) support for Arabic
+  10. Database query optimization
+  11. API endpoint security and validation
+  12. Error handling and logging
+  13. Testing coverage and quality
+  14. Code documentation and comments
 
 # Notification settings
 notifications:

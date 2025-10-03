@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { useAuthStore } from '@/store/authStore'
 import { FileText, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { useTranslation } from '@/hooks/useTranslation'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -16,9 +17,10 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
-  
+
   const navigate = useNavigate()
   const { setUser, setToken } = useAuthStore()
+  const { t } = useTranslation()
 
   // Mock users data
   const mockUsers = [
@@ -82,7 +84,7 @@ export default function LoginPage() {
       console.log('Found user:', user)
       
       if (!user) {
-        setError('البريد الإلكتروني أو كلمة المرور غير صحيحة')
+        setError(t('auth.invalidCredentials'))
         setIsLoading(false)
         return
       }
@@ -123,7 +125,7 @@ export default function LoginPage() {
 
     } catch (error) {
       console.error('Login error:', error)
-      setError('حدث خطأ أثناء تسجيل الدخول')
+      setError(t('auth.loginError'))
     } finally {
       setIsLoading(false)
     }
@@ -137,19 +139,16 @@ export default function LoginPage() {
             <div className="mx-auto mb-4 h-12 w-12 bg-primary/10 rounded-lg flex items-center justify-center">
               <FileText className="h-6 w-6 text-primary" />
             </div>
-            <CardTitle className="text-2xl font-bold">تسجيل الدخول</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t('auth.login')}</CardTitle>
             <CardDescription>
-              إلى نظام استطلاعات AMSteel
+              {t('common.appName')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-center mb-2">
-                مرحباً بعودتك
+                {t('common.welcome')}
               </h2>
-              <p className="text-sm text-muted-foreground text-center">
-                أدخل بياناتك للوصول إلى حسابك
-              </p>
             </div>
 
             {error && (
@@ -161,27 +160,27 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">البريد الإلكتروني</Label>
+                <Label htmlFor="email">{t('auth.email')}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="أدخل بريدك الإلكتروني"
+                  placeholder={t('auth.email')}
                   required
                   className="text-right"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">كلمة المرور</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="أدخل كلمة المرور"
+                    placeholder={t('auth.password')}
                     required
                     className="text-right pr-10"
                   />
@@ -209,11 +208,11 @@ export default function LoginPage() {
                     onCheckedChange={(checked) => setRememberMe(checked as boolean)}
                   />
                   <Label htmlFor="remember" className="text-sm">
-                    تذكرني
+                    {t('auth.rememberMe')}
                   </Label>
                 </div>
                 <Button variant="link" className="p-0 h-auto text-sm">
-                  نسيت كلمة المرور؟
+                  {t('auth.forgotPassword')}
                 </Button>
               </div>
 
@@ -222,36 +221,15 @@ export default function LoginPage() {
                 className="w-full"
                 disabled={isLoading}
               >
-                {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
+                {isLoading ? t('auth.loggingIn') : t('auth.loginButton')}
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                ليس لديك حساب؟{' '}
-                <Button variant="link" className="p-0 h-auto text-sm">
-                  إنشاء حساب جديد
-                </Button>
-              </p>
-            </div>
-
             {/* Demo Accounts */}
             <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-              <h3 className="text-sm font-medium mb-3">حسابات تجريبية:</h3>
-              <div className="space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="font-medium">مدير:</span>
-                  <span>admin@amsteel.com / admin123</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">مطور:</span>
-                  <span>developer@amsteel.com / dev123</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">موظف:</span>
-                  <span>employee@amsteel.com / emp123</span>
-                </div>
-              </div>
+              <h3 className="text-sm font-medium mb-3">{t('roles.admin')}: admin@amsteel.com / admin123</h3>
+              <h3 className="text-sm font-medium mb-3">{t('roles.developer')}: developer@amsteel.com / dev123</h3>
+              <h3 className="text-sm font-medium mb-3">{t('roles.employee')}: employee@amsteel.com / emp123</h3>
             </div>
           </CardContent>
         </Card>

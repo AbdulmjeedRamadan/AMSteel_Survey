@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, Settings } from 'lucide-react'
@@ -8,6 +9,7 @@ import toast from 'react-hot-toast'
 
 export default function SystemConfigurationPage() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,9 +28,9 @@ export default function SystemConfigurationPage() {
               <div className="flex items-center space-x-2">
                 <Settings className="h-6 w-6 text-primary" />
                 <div>
-                  <h1 className="text-2xl font-bold">إعدادات النظام المتقدمة</h1>
+                  <h1 className="text-2xl font-bold">{t('ui.systemConfig.advancedSystemSettings')}</h1>
                   <p className="text-muted-foreground">
-                    إدارة شاملة لجميع إعدادات النظام والميزات
+                    {t('ui.systemConfig.comprehensiveManagement')}
                   </p>
                 </div>
               </div>

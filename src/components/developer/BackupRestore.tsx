@@ -684,7 +684,7 @@ export default function BackupRestore({
 
       {/* Create Backup Dialog */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl mobile-popup">
           <DialogHeader>
             <DialogTitle>إنشاء نسخة احتياطية جديدة</DialogTitle>
             <DialogDescription>
@@ -798,7 +798,7 @@ export default function BackupRestore({
 
       {/* Restore Backup Dialog */}
       <Dialog open={showRestoreDialog} onOpenChange={setShowRestoreDialog}>
-        <DialogContent>
+        <DialogContent className="mobile-popup">
           <DialogHeader>
             <DialogTitle>استعادة النسخة الاحتياطية</DialogTitle>
             <DialogDescription>

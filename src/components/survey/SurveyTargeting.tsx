@@ -341,7 +341,7 @@ export default function SurveyTargeting({ survey, onUpdate, onSave }: SurveyTarg
                             </span>
                           </div>
                           <div className="flex items-center space-x-1">
-                            <Button variant="ghost" size="icon">
+                            <Button variant="ghost" size="icon" className="mobile-button">
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => handleRemoveRule(rule.id)}>

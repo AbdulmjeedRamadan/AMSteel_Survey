@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatDate } from '@/lib/utils'
 import { searchClients } from '@/lib/smartSearch'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -60,6 +61,7 @@ interface ClientTrackingProps {
 }
 
 export default function ClientTracking({ onExport }: ClientTrackingProps) {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('clients')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -254,9 +256,9 @@ export default function ClientTracking({ onExport }: ClientTrackingProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">تتبع تقدم العملاء</h2>
+          <h2 className="text-2xl font-bold">{t('ui.management.clientTracking')}</h2>
           <p className="text-muted-foreground">
-            مراقبة تقدم العملاء وتحليل الأداء
+            {t('ui.management.viewTrackClientProgress')}
           </p>
         </div>
       </div>
@@ -441,10 +443,10 @@ export default function ClientTracking({ onExport }: ClientTrackingProps) {
                         </div>
                         
                         <div className="flex items-center space-x-1">
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="mobile-button">
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="mobile-button">
                             <Mail className="h-4 w-4" />
                           </Button>
                         </div>

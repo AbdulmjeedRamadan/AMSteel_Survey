@@ -753,7 +753,7 @@ export default function SystemConfiguration({
 
       {/* Preview Dialog */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl mobile-popup">
           <DialogHeader>
             <DialogTitle>معاينة الإعدادات</DialogTitle>
             <DialogDescription>

@@ -57,7 +57,7 @@ export default function ConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md mobile-popup">
         <DialogHeader>
           <div className="flex items-center space-x-3">
             <Icon className={`h-6 w-6 ${iconColor}`} />

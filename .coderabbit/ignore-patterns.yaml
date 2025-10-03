@@ -1,0 +1,65 @@
+# CodeRabbit Ignore Patterns
+# This file defines patterns that CodeRabbit should ignore during reviews
+
+# File patterns to ignore
+ignore_files:
+  - "*.log"
+  - "*.tmp"
+  - "*.cache"
+  - "node_modules/**"
+  - "dist/**"
+  - "build/**"
+  - ".git/**"
+  - "coverage/**"
+  - "*.min.js"
+  - "*.min.css"
+  - "package-lock.json"
+  - "yarn.lock"
+  - "pnpm-lock.yaml"
+
+# Directory patterns to ignore
+ignore_directories:
+  - "node_modules"
+  - "dist"
+  - "build"
+  - ".git"
+  - "coverage"
+  - ".vscode"
+  - ".idea"
+  - "temp"
+  - "tmp"
+
+# Code patterns to ignore (regex)
+ignore_code_patterns:
+  - "console\.log\(.*\)"  # Ignore console.log statements
+  - "TODO.*"              # Ignore TODO comments
+  - "FIXME.*"             # Ignore FIXME comments
+  - "DEBUG.*"             # Ignore DEBUG statements
+
+# Specific files to ignore
+ignore_specific_files:
+  - "hardcoded-strings-report.json"
+  - "scripts/find-hardcoded-strings.js"
+  - "*.md"  # Ignore markdown files for code review
+  - "*.txt" # Ignore text files
+
+# Language-specific ignores
+typescript_ignores:
+  - "@ts-ignore"
+  - "@ts-nocheck"
+  - "any"  # Flag any usage for review but don't fail
+
+react_ignores:
+  - "key={index}"  # Flag for review but don't fail
+  - "dangerouslySetInnerHTML"  # Flag for security review
+
+# Security-sensitive patterns to always flag
+security_flags:
+  - "eval\("
+  - "innerHTML"
+  - "document\.write"
+  - "setTimeout.*string"
+  - "setInterval.*string"
+  - "new Function"
+  - "\.innerHTML\s*="
+  - "\.outerHTML\s*="

@@ -1,10 +1,43 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="rtl">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AMSteel Survey System</title>
+
+    <!-- Pre-boot language detection (prevents flicker) -->
+    <script>
+      (function() {
+        try {
+          const stored = localStorage.getItem('amsteel-language');
+          let lang = 'ar';
+          let dir = 'rtl';
+
+          if (stored) {
+            try {
+              const parsed = JSON.parse(stored);
+              if (parsed.state && parsed.state.language) {
+                lang = parsed.state.language;
+                dir = parsed.state.direction || (lang === 'ar' ? 'rtl' : 'ltr');
+              }
+            } catch (e) {
+              // If parsing fails, try direct value
+              lang = stored === 'en' ? 'en' : 'ar';
+              dir = lang === 'ar' ? 'rtl' : 'ltr';
+            }
+          }
+
+          document.documentElement.setAttribute('lang', lang);
+          document.documentElement.setAttribute('dir', dir);
+          document.documentElement.className = dir;
+        } catch (e) {
+          // Fallback to defaults
+          console.warn('Language detection failed:', e);
+        }
+      })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">

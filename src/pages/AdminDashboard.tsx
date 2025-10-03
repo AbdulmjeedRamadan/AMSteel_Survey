@@ -30,6 +30,7 @@ import {
   Copy
 } from 'lucide-react'
 import { toast } from 'react-hot-toast'
+import { useTranslation } from '@/hooks/useTranslation'
 
 // Import new components
 import ResponseManagement from '@/components/admin/ResponseManagement'
@@ -39,6 +40,7 @@ import SurveySettings from '@/components/admin/SurveySettings'
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('overview')
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -271,42 +273,42 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">لوحة المدير</h1>
+          <h1 className="text-3xl font-bold">{t('dashboard.adminDashboard')}</h1>
           <p className="text-muted-foreground">
-            إدارة الاستطلاعات والتحليلات
+            {t('dashboard.manageSurveysAnalytics')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 disabled={selectedSurveys.length === 0}
               >
                 <Download className="h-4 w-4 mr-2" />
-                تصدير
+                {t('common.export')}
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => handleExportData('csv')}>
                 <Download className="h-4 w-4 mr-2" />
-                تصدير CSV
+                {t('common.export')} CSV
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleExportData('pdf')}>
                 <Download className="h-4 w-4 mr-2" />
-                تصدير PDF
+                {t('common.export')} PDF
               </DropdownMenuItem>
               {selectedSurveys.length > 0 && (
                 <div className="px-2 py-1 text-xs text-muted-foreground border-t">
-                  عدد الملفات المحددة: {selectedSurveys.length}
+                  {selectedSurveys.length} {t('surveys.title')}
                 </div>
               )}
             </DropdownMenuContent>
           </DropdownMenu>
           <Button onClick={handleCreateSurvey}>
             <Plus className="h-4 w-4 mr-2" />
-            استطلاع جديد
+            {t('surveys.createSurvey')}
           </Button>
         </div>
       </div>
@@ -316,53 +318,53 @@ export default function AdminDashboard() {
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="font-medium">إجراءات سريعة</h3>
-              <p className="text-sm text-muted-foreground">الوصول السريع للميزات الرئيسية</p>
+              <h3 className="font-medium">{t('dashboard.quickActions')}</h3>
+              <p className="text-sm text-muted-foreground">{t('dashboard.viewManageSurveys')}</p>
             </div>
             <div className="flex items-center space-x-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={handleCreateSurvey}
                 className="flex items-center space-x-2"
               >
                 <Plus className="h-4 w-4" />
-                <span>إنشاء استطلاع</span>
+                <span>{t('dashboard.addSurvey')}</span>
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     disabled={selectedSurveys.length === 0}
                     className="flex items-center space-x-2"
                   >
                     <Download className="h-4 w-4" />
-                    <span>تصدير</span>
+                    <span>{t('dashboard.exportData')}</span>
                     <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => handleExportData('csv')}>
                     <Download className="h-4 w-4 mr-2" />
-                    تصدير CSV
+                    {t('common.export')} CSV
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleExportData('pdf')}>
                     <Download className="h-4 w-4 mr-2" />
-                    تصدير PDF
+                    {t('common.export')} PDF
                   </DropdownMenuItem>
                   {selectedSurveys.length > 0 && (
                     <div className="px-2 py-1 text-xs text-muted-foreground border-t">
-                      عدد الملفات المحددة: {selectedSurveys.length}
+                      {selectedSurveys.length} {t('surveys.title')}
                     </div>
                   )}
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setActiveTab('settings')}
                 className="flex items-center space-x-2"
               >
                 <Target className="h-4 w-4" />
-                <span>إعدادات الاستطلاعات</span>
+                <span>{t('dashboard.surveySettings')}</span>
               </Button>
             </div>
           </div>
@@ -371,12 +373,12 @@ export default function AdminDashboard() {
 
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mobile-spacing">
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">إجمالي الاستطلاعات</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.totalSurveys')}</p>
                 <p className="text-2xl font-bold">{stats.totalSurveys}</p>
               </div>
               <div className="h-8 w-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -386,7 +388,7 @@ export default function AdminDashboard() {
             <div className="mt-2 flex items-center text-sm">
               <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
               <span className="text-green-600">+12%</span>
-              <span className="text-muted-foreground mr-2">من الشهر الماضي</span>
+              <span className="text-muted-foreground mr-2">{t('dashboard.fromPreviousMonth')}</span>
             </div>
           </CardContent>
         </Card>
@@ -395,7 +397,7 @@ export default function AdminDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">الاستطلاعات النشطة</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.activeSurveys')}</p>
                 <p className="text-2xl font-bold">{stats.activeSurveys}</p>
               </div>
               <div className="h-8 w-8 bg-green-100 rounded-lg flex items-center justify-center">
@@ -404,7 +406,7 @@ export default function AdminDashboard() {
             </div>
             <div className="mt-2 flex items-center text-sm">
               <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
-              <span className="text-green-600">جميعها تعمل بشكل طبيعي</span>
+              <span className="text-green-600">{t('dashboard.workingCorrectly')}</span>
             </div>
           </CardContent>
         </Card>
@@ -413,7 +415,7 @@ export default function AdminDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">إجمالي الردود</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.totalResponses')}</p>
                 <p className="text-2xl font-bold">{stats.totalResponses}</p>
               </div>
               <div className="h-8 w-8 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -423,7 +425,7 @@ export default function AdminDashboard() {
             <div className="mt-2 flex items-center text-sm">
               <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
               <span className="text-green-600">+18%</span>
-              <span className="text-muted-foreground mr-2">من الشهر الماضي</span>
+              <span className="text-muted-foreground mr-2">{t('dashboard.fromPreviousMonth')}</span>
             </div>
           </CardContent>
         </Card>
@@ -432,7 +434,7 @@ export default function AdminDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">معدل الإكمال</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.completionRate')}</p>
                 <p className="text-2xl font-bold">{stats.completionRate}%</p>
               </div>
               <div className="h-8 w-8 bg-orange-100 rounded-lg flex items-center justify-center">
@@ -442,7 +444,7 @@ export default function AdminDashboard() {
             <div className="mt-2 flex items-center text-sm">
               <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
               <span className="text-green-600">+5%</span>
-              <span className="text-muted-foreground mr-2">من الشهر الماضي</span>
+              <span className="text-muted-foreground mr-2">{t('dashboard.fromPreviousMonth')}</span>
             </div>
           </CardContent>
         </Card>
@@ -451,7 +453,7 @@ export default function AdminDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">العملاء</p>
+                <p className="text-sm font-medium text-muted-foreground">{t('dashboard.clients')}</p>
                 <p className="text-2xl font-bold">{stats.totalClients}</p>
               </div>
               <div className="h-8 w-8 bg-indigo-100 rounded-lg flex items-center justify-center">
@@ -459,7 +461,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="mt-2 flex items-center text-sm">
-              <span className="text-muted-foreground">عملاء خارجيين</span>
+              <span className="text-muted-foreground">{t('dashboard.clientsCount')}</span>
             </div>
           </CardContent>
         </Card>
@@ -468,8 +470,8 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-          <TabsTrigger value="surveys">الاستطلاعات</TabsTrigger>
+          <TabsTrigger value="overview">{t('dashboard.overview')}</TabsTrigger>
+          <TabsTrigger value="surveys">{t('nav.surveys')}</TabsTrigger>
           <TabsTrigger value="responses">الردود</TabsTrigger>
           <TabsTrigger value="clients">العملاء</TabsTrigger>
           <TabsTrigger value="settings">الإعدادات</TabsTrigger>
@@ -481,9 +483,9 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>الاستطلاعات الأخيرة</CardTitle>
+                <CardTitle>{t('dashboard.recentSurveys')}</CardTitle>
                 <CardDescription>
-                  آخر الاستطلاعات التي تم إنشاؤها
+                  {t('dashboard.lastCreatedSurveys')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -503,7 +505,7 @@ export default function AdminDashboard() {
                         <Badge className={getStatusColor(survey.status)}>
                           {getStatusText(survey.status)}
                         </Badge>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="mobile-button">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </div>
@@ -515,7 +517,7 @@ export default function AdminDashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>إحصائيات هذا الشهر</CardTitle>
+                <CardTitle>{t('dashboard.thisMonthStats')}</CardTitle>
                 <CardDescription>
                   مقارنة مع الشهر الماضي
                 </CardDescription>
@@ -532,7 +534,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">الاستطلاعات النشطة</span>
+                    <span className="text-sm font-medium">{t('ui.cards.activeSurveys')}</span>
                     <div className="flex items-center space-x-2">
                       <span className="text-lg font-bold">{stats.activeSurveys}</span>
                       <Badge variant="secondary" className="text-blue-600">
@@ -561,9 +563,9 @@ export default function AdminDashboard() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle>إدارة الاستطلاعات</CardTitle>
+                  <CardTitle>{t('dashboard.surveyManagement')}</CardTitle>
                   <CardDescription>
-                    عرض وإدارة جميع الاستطلاعات
+                    {t('dashboard.viewManageSurveys')}
                   </CardDescription>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -839,7 +841,7 @@ export default function AdminDashboard() {
                   </div>
                   
                   <div className="space-y-2">
-                    <Label>الاستطلاعات المتاحة</Label>
+                    <Label>{t('ui.management.availableSurveys')}</Label>
                     <Select value={selectedSurveyForSharing || ''} onValueChange={setSelectedSurveyForSharing}>
                       <SelectTrigger>
                         <SelectValue placeholder="اختر استطلاع للمشاركة" />

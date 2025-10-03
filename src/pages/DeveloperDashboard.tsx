@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatDate } from '@/lib/utils'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,16 +11,11 @@ import {
   UserCheck, 
   FileText, 
   BarChart3, 
-  TrendingUp,
-  Plus,
   Activity,
   Shield,
   Database,
   Crown,
   Target,
-  CheckCircle,
-  AlertCircle,
-  Clock,
   Settings
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
@@ -33,10 +29,12 @@ import NotificationSystem from '@/components/developer/NotificationSystem'
 import SystemConfiguration from '@/components/developer/SystemConfiguration'
 import AdvancedResponseManagement from '@/components/developer/AdvancedResponseManagement'
 import BackupRestore from '@/components/developer/BackupRestore'
+import LanguageTest from '@/components/common/LanguageTest'
 
 export default function DeveloperDashboard() {
   const { user } = useAuthStore()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('overview')
 
   // Mock data
@@ -60,23 +58,23 @@ export default function DeveloperDashboard() {
     {
       id: '1',
       type: 'employee_registered',
-      message: 'سجل الموظف أحمد محمد',
+      message: t('ui.activity.employeeRegistered').replace('{name}', 'أحمد محمد'),
       timestamp: '2024-01-20T10:30:00Z',
       user: 'أحمد محمد'
     },
     {
       id: '2',
       type: 'survey_created',
-      message: 'أنشئ استطلاع رضا الموظفين',
+      message: t('ui.activity.surveyCreated').replace('{title}', 'رضا الموظفين'),
       timestamp: '2024-01-20T09:15:00Z',
       user: 'فاطمة أحمد'
     },
     {
       id: '3',
       type: 'promotion',
-      message: 'تم ترقية محمد السعيد إلى مدير',
+      message: t('ui.activity.promotion').replace('{name}', 'محمد السعيد'),
       timestamp: '2024-01-19T16:45:00Z',
-      user: 'المطور الرئيسي'
+      user: t('ui.activity.mainDeveloper')
     }
   ]
 
@@ -102,107 +100,108 @@ export default function DeveloperDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mobile-spacing">
         <div>
-          <h1 className="text-3xl font-bold">لوحة المطور</h1>
-          <p className="text-muted-foreground">
-            مرحباً {user?.full_name}، إليك نظرة عامة على النظام
+          <h1 className="text-3xl font-bold mobile-text">{t('ui.dashboard.developerDashboard')}</h1>
+          <p className="text-muted-foreground mobile-text">
+            {t('ui.dashboard.welcomeMessage').replace('{name}', user?.full_name || 'المستخدم')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
-          <Button variant="outline" onClick={() => navigate('/developer/system-config')}>
+          <Button variant="outline" onClick={() => navigate('/developer/system-config')} className="mobile-button">
             <Settings className="h-4 w-4 mr-2" />
-            إعدادات النظام
+            {t('ui.buttons.systemSettings')}
           </Button>
-          <Button variant="outline" onClick={() => window.open('/admin/dashboard', '_blank')}>
+          <Button variant="outline" onClick={() => window.open('/admin/dashboard', '_blank')} className="mobile-button">
             <Users className="h-4 w-4 mr-2" />
-            لوحة المدير
+            {t('ui.buttons.adminDashboard')}
           </Button>
-          <Button variant="outline" onClick={() => window.open('/admin/survey-builder', '_blank')}>
+          <Button variant="outline" onClick={() => window.open('/admin/survey-builder', '_blank')} className="mobile-button">
             <FileText className="h-4 w-4 mr-2" />
-            إنشاء استطلاع
+            {t('ui.buttons.createSurvey')}
           </Button>
         </div>
       </div>
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-9">
-          <TabsTrigger value="overview">نظرة عامة</TabsTrigger>
-          <TabsTrigger value="employees">الموظفون</TabsTrigger>
-          <TabsTrigger value="responses">الردود</TabsTrigger>
-          <TabsTrigger value="statistics">الإحصائيات</TabsTrigger>
-          <TabsTrigger value="activity">سجل الأنشطة</TabsTrigger>
-          <TabsTrigger value="notifications">الإشعارات</TabsTrigger>
-          <TabsTrigger value="configuration">الإعدادات</TabsTrigger>
-          <TabsTrigger value="backup">النسخ الاحتياطية</TabsTrigger>
-          <TabsTrigger value="system">النظام</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-10">
+          <TabsTrigger value="overview">{t('ui.navigation.overview')}</TabsTrigger>
+          <TabsTrigger value="employees">{t('ui.navigation.employees')}</TabsTrigger>
+          <TabsTrigger value="responses">{t('ui.navigation.responses')}</TabsTrigger>
+          <TabsTrigger value="statistics">{t('ui.navigation.statistics')}</TabsTrigger>
+          <TabsTrigger value="activity">{t('ui.navigation.activityLog')}</TabsTrigger>
+          <TabsTrigger value="notifications">{t('ui.navigation.notifications')}</TabsTrigger>
+          <TabsTrigger value="configuration">{t('ui.navigation.settings')}</TabsTrigger>
+          <TabsTrigger value="backup">{t('ui.navigation.backups')}</TabsTrigger>
+          <TabsTrigger value="system">{t('ui.navigation.system')}</TabsTrigger>
+          <TabsTrigger value="test">{t('ui.navigation.languageTest')}</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-6">
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mobile-spacing">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">إجمالي الموظفين</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('ui.cards.totalEmployees')}</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalEmployees}</div>
                 <p className="text-xs text-muted-foreground">
-                  +{stats.newEmployeesThisWeek} هذا الأسبوع
+                  +{stats.newEmployeesThisWeek} {t('ui.cards.thisWeek')}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">المديرين</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('ui.cards.managers')}</CardTitle>
                 <UserCheck className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalAdmins}</div>
                 <p className="text-xs text-muted-foreground">
-                  يمكنهم إنشاء الاستطلاعات
+                  {t('ui.cards.canCreateSurveys')}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">الاستطلاعات</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('ui.cards.totalSurveys')}</CardTitle>
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalSurveys}</div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.activeSurveys} نشط
+                  {stats.activeSurveys} {t('ui.cards.active')}
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">الردود</CardTitle>
+                <CardTitle className="text-sm font-medium">{t('ui.cards.totalResponses')}</CardTitle>
                 <BarChart3 className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalResponses.toLocaleString()}</div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.averageResponseRate}% معدل الاستجابة
+                  {stats.averageResponseRate}% {t('ui.cards.responseRate')}
                 </p>
               </CardContent>
             </Card>
           </div>
 
           {/* Recent Activity */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mobile-spacing">
             <Card>
               <CardHeader>
-                <CardTitle>النشاط الأخير</CardTitle>
+                <CardTitle>{t('ui.sections.latestActivity')}</CardTitle>
                 <CardDescription>
-                  آخر الأنشطة في النظام
+                  {t('ui.sections.latestActivitiesInSystem')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -215,7 +214,7 @@ export default function DeveloperDashboard() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium">{activity.message}</p>
                         <p className="text-xs text-muted-foreground">
-                          بواسطة {activity.user} • {formatDate(activity.timestamp)}
+                          {t('ui.activity.by')} {activity.user} • {formatDate(activity.timestamp)}
                         </p>
                       </div>
                     </div>
@@ -226,9 +225,9 @@ export default function DeveloperDashboard() {
 
             <Card>
               <CardHeader>
-                <CardTitle>حالة النظام</CardTitle>
+                <CardTitle>{t('ui.sections.systemStatus')}</CardTitle>
                 <CardDescription>
-                  مؤشرات الأداء التقنية
+                  {t('ui.sections.technicalPerformanceIndicators')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -236,16 +235,16 @@ export default function DeveloperDashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Shield className="h-4 w-4 text-green-600" />
-                      <span className="text-sm font-medium">الأمان</span>
+                      <span className="text-sm font-medium">{t('ui.sections.security')}</span>
                     </div>
                     <Badge className="bg-green-100 text-green-800">
-                      آمن
+                      {t('ui.sections.secure')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Activity className="h-4 w-4 text-blue-600" />
-                      <span className="text-sm font-medium">وقت التشغيل</span>
+                      <span className="text-sm font-medium">{t('ui.sections.uptime')}</span>
                     </div>
                     <Badge className="bg-blue-100 text-blue-800">
                       {stats.systemUptime}
@@ -254,7 +253,7 @@ export default function DeveloperDashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Database className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm font-medium">آخر نسخة احتياطية</span>
+                      <span className="text-sm font-medium">{t('ui.sections.lastBackup')}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">
                       {formatDate(stats.lastBackup)}
@@ -263,10 +262,10 @@ export default function DeveloperDashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Target className="h-4 w-4 text-orange-600" />
-                      <span className="text-sm font-medium">التخزين</span>
+                      <span className="text-sm font-medium">{t('ui.sections.storage')}</span>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {stats.storageUsed} من {stats.totalStorage}
+                      {stats.storageUsed} {t('ui.sections.outOf')} {stats.totalStorage}
                     </span>
                   </div>
                 </div>
@@ -411,9 +410,9 @@ export default function DeveloperDashboard() {
         <TabsContent value="system" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>إدارة النظام</CardTitle>
-              <CardDescription>
-                أدوات إدارة النظام والصيانة
+              <CardTitle className="mobile-text">{t('ui.sections.systemManagement')}</CardTitle>
+              <CardDescription className="mobile-text">
+                {t('ui.sections.systemManagementTools')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -422,21 +421,21 @@ export default function DeveloperDashboard() {
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <Shield className="h-5 w-5 text-green-600" />
-                      <span>الأمان</span>
+                      <span className="mobile-text">{t('ui.sections.security')}</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">حالة الأمان</span>
-                      <Badge className="bg-green-100 text-green-800">آمن</Badge>
+                      <span className="text-sm mobile-text">{t('ui.sections.securityStatus')}</span>
+                      <Badge className="bg-green-100 text-green-800">{t('ui.sections.secure')}</Badge>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">آخر فحص</span>
-                      <span className="text-xs text-muted-foreground">منذ ساعتين</span>
+                      <span className="text-sm mobile-text">{t('ui.sections.lastScan')}</span>
+                      <span className="text-xs text-muted-foreground">{t('ui.sections.hoursAgo')}</span>
                     </div>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full mobile-button">
                       <Shield className="h-4 w-4 mr-2" />
-                      فحص الأمان
+                      {t('ui.buttons.securityScan')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -445,21 +444,21 @@ export default function DeveloperDashboard() {
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <Database className="h-5 w-5 text-blue-600" />
-                      <span>النسخ الاحتياطية</span>
+                      <span className="mobile-text">{t('ui.navigation.backups')}</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">آخر نسخة</span>
+                      <span className="text-sm mobile-text">{t('ui.sections.lastBackup')}</span>
                       <span className="text-xs text-muted-foreground">{formatDate(stats.lastBackup)}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">حجم النسخة</span>
+                      <span className="text-sm mobile-text">{t('ui.sections.lastBackupSize')}</span>
                       <span className="text-xs text-muted-foreground">1.2 GB</span>
                     </div>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full mobile-button">
                       <Database className="h-4 w-4 mr-2" />
-                      إنشاء نسخة احتياطية
+                      {t('ui.buttons.createBackup')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -468,21 +467,21 @@ export default function DeveloperDashboard() {
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <Activity className="h-5 w-5 text-purple-600" />
-                      <span>الأداء</span>
+                      <span className="mobile-text">{t('ui.sections.uptime')}</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">وقت التشغيل</span>
+                      <span className="text-sm mobile-text">{t('ui.sections.uptime')}</span>
                       <Badge className="bg-green-100 text-green-800">{stats.systemUptime}</Badge>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">استجابة الخادم</span>
+                      <span className="text-sm mobile-text">{t('ui.sections.serverResponse')}</span>
                       <span className="text-xs text-muted-foreground">45ms</span>
                     </div>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full mobile-button">
                       <Activity className="h-4 w-4 mr-2" />
-                      فحص الأداء
+                      {t('ui.buttons.performanceCheck')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -491,30 +490,35 @@ export default function DeveloperDashboard() {
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <Target className="h-5 w-5 text-orange-600" />
-                      <span>التخزين</span>
+                      <span className="mobile-text">{t('ui.sections.storage')}</span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">المستخدم</span>
+                      <span className="text-sm mobile-text">{t('ui.sections.used')}</span>
                       <span className="text-xs text-muted-foreground">{stats.storageUsed}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">المتاح</span>
+                      <span className="text-sm mobile-text">{t('ui.sections.available')}</span>
                       <span className="text-xs text-muted-foreground">7.7 GB</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
                       <div className="bg-primary h-2 rounded-full" style={{ width: '23%' }}></div>
                     </div>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full mobile-button">
                       <Target className="h-4 w-4 mr-2" />
-                      تنظيف التخزين
+                      {t('ui.buttons.storageCleanup')}
                     </Button>
                   </CardContent>
                 </Card>
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Language Test Tab */}
+        <TabsContent value="test" className="space-y-6">
+          <LanguageTest />
         </TabsContent>
       </Tabs>
     </div>

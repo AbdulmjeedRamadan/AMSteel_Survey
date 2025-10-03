@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { formatDate } from '@/lib/utils'
 import { searchResponses } from '@/lib/smartSearch'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -66,6 +67,7 @@ interface ResponseManagementProps {
 }
 
 export default function ResponseManagement({ surveyId, onExport }: ResponseManagementProps) {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('list')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedResponses, setSelectedResponses] = useState<string[]>([])
@@ -304,13 +306,13 @@ export default function ResponseManagement({ surveyId, onExport }: ResponseManag
 
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mobile-spacing">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">إدارة الردود</h2>
-          <p className="text-muted-foreground">
-            عرض وإدارة ردود الاستطلاعات
+          <h2 className="text-2xl font-bold mobile-text">{t('ui.management.responseManagement')}</h2>
+          <p className="text-muted-foreground mobile-text">
+            {t('ui.management.viewManageSurveyResponses')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -407,8 +409,8 @@ export default function ResponseManagement({ surveyId, onExport }: ResponseManag
                   </div>
                 ) : (
                   filteredResponses.map((response) => (
-                  <Card key={response.id} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-4">
+                  <Card key={response.id} className="hover:shadow-md transition-shadow mobile-card">
+                    <CardContent className="p-4 mobile-card">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4">
                           <Checkbox
@@ -472,13 +474,13 @@ export default function ResponseManagement({ surveyId, onExport }: ResponseManag
                         </div>
                         
                         <div className="flex items-center space-x-1">
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="mobile-button">
                             <Eye className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="mobile-button">
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon">
+                          <Button variant="ghost" size="icon" className="mobile-button">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>

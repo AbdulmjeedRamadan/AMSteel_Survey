@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAuthStore } from '@/store/authStore'
+import { useTranslation } from '@/hooks/useTranslation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,6 +25,7 @@ import { formatDate } from '@/lib/utils'
 
 export default function ProfilePage() {
   const { user, updateUser } = useAuthStore()
+  const { t } = useTranslation()
   // Only developers can edit profile information
   const canEdit = user?.role === 'developer'
   const [isEditing, setIsEditing] = useState(false)
@@ -99,9 +101,9 @@ export default function ProfilePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">الملف الشخصي</h1>
+          <h1 className="text-3xl font-bold">{t('ui.profile.personalProfile')}</h1>
           <p className="text-muted-foreground">
-            إدارة معلوماتك الشخصية
+            {t('ui.profile.managePersonalInfo')}
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -110,7 +112,7 @@ export default function ProfilePage() {
               {!isEditing ? (
                 <Button onClick={() => setIsEditing(true)}>
                   <Edit className="h-4 w-4 mr-2" />
-                  تعديل الملف
+                  {t('ui.buttons.editProfile')}
                 </Button>
               ) : (
                 <div className="flex items-center space-x-2">
@@ -129,7 +131,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mobile-spacing">
         {/* Profile Card */}
         <div className="lg:col-span-1">
           <Card>
@@ -166,15 +168,15 @@ export default function ProfilePage() {
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>معلومات شخصية</CardTitle>
+              <CardTitle>{t('ui.profile.personalInformation')}</CardTitle>
               <CardDescription>
-                تحديث معلوماتك الشخصية والمهنية
+                {t('ui.profile.updatePersonalProfessional')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="full_name">الاسم الكامل *</Label>
+                  <Label htmlFor="full_name">{t('ui.management.fullName')} *</Label>
                   {isEditing && canEdit ? (
                     <Input
                       id="full_name"
@@ -191,7 +193,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">البريد الإلكتروني *</Label>
+                  <Label htmlFor="email">{t('ui.management.email')} *</Label>
                   {isEditing && canEdit ? (
                     <Input
                       id="email"
@@ -209,7 +211,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">رقم الهاتف</Label>
+                  <Label htmlFor="phone">{t('ui.management.phoneNumber')}</Label>
                   {isEditing && canEdit ? (
                     <Input
                       id="phone"
